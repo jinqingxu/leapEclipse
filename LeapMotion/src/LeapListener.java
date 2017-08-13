@@ -76,18 +76,16 @@ public class LeapListener extends Listener{
         	
         	FileOutputStream outPath = new FileOutputStream(new File(LeapLogin.writePath + LeapLogin.fileName),true);			
         	OutputStreamWriter out = new OutputStreamWriter(outPath);
-				
-			//out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +"\n");
-			out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +"\n");
-			out.close();
+		double speedCaculate=Math.sqrt(Math.pow(speed.getX(),2)+Math.pow(speed.getY(),2)+Math.pow(speed.getZ(),2));
+		//out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +"\n");
+		out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +speed+","+speedCaculate+"\n");
+		out.close();
 
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
 			System.out.println("Error writing to file: " + e);
 		}   // ENd of Try-Catch
 
-
-	
 	}
 	
 
