@@ -1,4 +1,5 @@
 import com.leapmotion.leap.*;
+
 import com.leapmotion.leap.Gesture.State;
 
 import java.io.BufferedWriter;
@@ -8,12 +9,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Scanner;
-
+import org.apache.commons.net.time.TimeTCPClient;
 public class LeapListener extends Listener{
-		
+	public long initialTimestamp=0;
+	public long initialSystemTime=0;
 	public void onInitialize(Controller controller){
 		
 		System.out.println("Initialized");
+		
 		
 	}
 	
@@ -25,7 +28,27 @@ public class LeapListener extends Listener{
 		controller.enableGesture(Gesture.Type.TYPE_CIRCLE);
 		controller.enableGesture(Gesture.Type.TYPE_SCREEN_TAP);
 		controller.enableGesture(Gesture.Type.TYPE_KEY_TAP);
-		
+		/*System.out.println("arrive");
+        try {
+            TimeTCPClient client = new TimeTCPClient();
+            try {
+                // Set timeout of 60 seconds
+                client.setDefaultTimeout(1000);
+                // Connecting to time server
+                // Other time servers can be found at : http://tf.nist.gov/tf-cgi/servers.cgi#
+                // Make sure that your program NEVER queries a server more frequently than once every 4 seconds
+                client.connect("nist.netservicesgroup.com");
+                initialTimestamp=client.getTime();
+                initialSystemTime=System.currentTimeMillis();
+                
+            } finally {
+                client.disconnect();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+       System.out.println(initialTimestamp);
+		System.out.println(initialSystemTime);*/
 	}
 	
 	public void onDisconnect(Controller controller){
@@ -41,7 +64,6 @@ public class LeapListener extends Listener{
 	}
 	
 	public void onFrame(Controller controller){
-		
 		Frame frame = controller.frame();
 		//Tool tool=frame.tools().frontmost();
 		
@@ -79,9 +101,16 @@ public class LeapListener extends Listener{
 		double speedCalculate=Math.sqrt(Math.pow(speed.getX(),2)+Math.pow(speed.getY(),2)+Math.pow(speed.getZ(),2));
 		//System.out.println("speedCalculate");
 		//System.out.println(speedCalculate);
+		//long currentSystemTime=System.currentTimeMillis();
+		//long curTimestamp=initialTimestamp+currentSystemTime-initialSystemTime;
+		//System.out.println(curTimestamp);
 		System.out.println(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX()+","+ speed.getY() +"," + speed.getZ() +","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +speedCalculate+","+"\n");
 		//out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +"\n");
 		out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +"," +speedCalculate+"\n");
+		
+		
+	
+		//out.write(frame.id() + ","+ frame.timestamp() + ","+ curTimestamp + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +"," +speedCalculate+"\n");
 		out.close();
 
 		} catch (IOException e) {

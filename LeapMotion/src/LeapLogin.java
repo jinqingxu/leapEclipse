@@ -14,13 +14,27 @@ import java.io.OutputStreamWriter;
 import java.util.Scanner;
 
 import com.leapmotion.leap.*;
-
+import java.io.File;  
 public class LeapLogin {
 	
 	static String fileName;
 	static String readPath = "/Users/irene/Documents/McGillUni/ACT_Research_Lab/Experiments/Motion Tracking Study/Experiment Data/Data from LEAP";	
-	static String writePath = "/Users/irene/Documents/McGillUni/ACT_Research_Lab/Experiments/Motion Tracking Study/Experiment Data/Data from LEAP";
-	
+	static String writePath = "/Users/irene/Documents/McGillUni/ACT_Research_Lab/Experiments/Motion Tracking Study/Experiment Data/";
+	// to create a directory for an experiment
+	public static boolean createDir(String destDirName) {  
+	        File dir = new File(destDirName);  
+	        if (!destDirName.endsWith(File.separator)) {  
+	            destDirName = destDirName + File.separator;  
+	        }  
+	         
+	        if (dir.mkdirs()) {  
+	            
+	            return true;  
+	        } else {  
+	            System.out.println("fail to mkdir");  
+	            return false;  
+	        }  
+	    }  
 	public static void main(String [] args){
 		
         String date = new SimpleDateFormat("yyyy/MM/dd").format(Calendar.getInstance().getTime());  // get current Date
@@ -31,7 +45,11 @@ public class LeapLogin {
 		System.out.println("Participant ID:");
 
 		String pid =s.nextLine();
-		fileName = "test_results_PID_"+ pid +"_Frame.csv";
+		fileName = "Data from LEAPtest_results_PID_"+ pid +"_Frame.csv";
+		
+		writePath=writePath+"PID_"+pid;
+		createDir(writePath);
+		writePath+='/';
 		
 		System.out.println("frame ID"+ ","+"timestamp"+","+ "systemTime" + ","+"tipPositionX "+","+"tipPositionY"+","+"tipPositionZ"+"," +"directionUnitX "+","+"directionUnitY"+","+"directionUnitZ"+ ","+ "Yaw"+","+"Pitch"+","+"Roll"+","+ "stabilizedPositionX "+","+ "stabilizedPositionY "+","+ "stabilizedPositionZ "+","+"speedX"+","+ "speedY "+","+ "speedZ "+","+"boneDistal1X"+","+ "boneDistal1Y "+","+ "boneDistal1Z "+","+"boneDistal2X"+","+ "boneDistal2Y "+","+ "boneDistal2Z "+","+"DistalDirUnitX"+","+"DistalDirUnitY"+","+"DistalDirUnitZ"+","+"Distal Width"+","+"boneIntermediate1X"+","+ "boneIntermediate1Y "+","+ "boneIntermediate1Z "+","+"boneIntermediate2X"+","+ "boneIntermediate2Y "+","+ "boneIntermeidiate2Z "+","+"IntermediateDirUnitX"+","+"IntermediateDirUnitY"+","+"IntermediateDirUnitZ"+","+"Intermediate Width"+","+"boneProximal1X"+","+ "boneProximal1Y "+","+ "boneProximal1Z "+","+"boneProximal2X"+","+ "boneProximal2Y "+","+ "boneProximal2Z "+","+"ProximalDirUnitX"+","+"ProximalDirUnitY"+","+"ProximalDirUnitZ"+","+"Proximal Width"+","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +"\n");
 
