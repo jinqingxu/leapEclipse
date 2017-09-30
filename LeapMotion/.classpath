@@ -8,5 +8,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/irene/Desktop/eclipse/leapmotion/LeapMotion/lib/commons-net-3.0.1.jar"/>
+	<classpathentry kind="lib" path="/Users/irene/Desktop/eclipse/leapmotion/LeapMotion/lib/javacsv.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

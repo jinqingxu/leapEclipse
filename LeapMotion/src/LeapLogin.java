@@ -20,6 +20,8 @@ public class LeapLogin {
 	static String fileName;
 	static String readPath = "/Users/irene/Documents/McGillUni/ACT_Research_Lab/Experiments/Motion Tracking Study/Experiment Data/Data from LEAP";	
 	static String writePath = "/Users/irene/Documents/McGillUni/ACT_Research_Lab/Experiments/Motion Tracking Study/Experiment Data/";
+	static String writeLeapPath="";
+	static String pid;
 	// to create a directory for an experiment
 	public static boolean createDir(String destDirName) {  
 	        File dir = new File(destDirName);  
@@ -44,12 +46,12 @@ public class LeapLogin {
 		Scanner s = new Scanner(System.in);
 		System.out.println("Participant ID:");
 
-		String pid =s.nextLine();
-		fileName = "Data from LEAPtest_results_PID_"+ pid +"_Frame.csv";
-		
-		writePath=writePath+"PID_"+pid;
-		createDir(writePath);
-		writePath+='/';
+		pid =s.nextLine();
+		fileName = "PID_"+ pid +"_Data_from_LEAPtest_results_Frame.csv";
+	    writeLeapPath=writePath;
+		writeLeapPath=writeLeapPath+"PID_"+pid;
+		createDir(writeLeapPath);
+		writeLeapPath+='/';
 		
 		System.out.println("frame ID"+ ","+"timestamp"+","+ "systemTime" + ","+"tipPositionX "+","+"tipPositionY"+","+"tipPositionZ"+"," +"directionUnitX "+","+"directionUnitY"+","+"directionUnitZ"+ ","+ "Yaw"+","+"Pitch"+","+"Roll"+","+ "stabilizedPositionX "+","+ "stabilizedPositionY "+","+ "stabilizedPositionZ "+","+"speedX"+","+ "speedY "+","+ "speedZ "+","+"boneDistal1X"+","+ "boneDistal1Y "+","+ "boneDistal1Z "+","+"boneDistal2X"+","+ "boneDistal2Y "+","+ "boneDistal2Z "+","+"DistalDirUnitX"+","+"DistalDirUnitY"+","+"DistalDirUnitZ"+","+"Distal Width"+","+"boneIntermediate1X"+","+ "boneIntermediate1Y "+","+ "boneIntermediate1Z "+","+"boneIntermediate2X"+","+ "boneIntermediate2Y "+","+ "boneIntermeidiate2Z "+","+"IntermediateDirUnitX"+","+"IntermediateDirUnitY"+","+"IntermediateDirUnitZ"+","+"Intermediate Width"+","+"boneProximal1X"+","+ "boneProximal1Y "+","+ "boneProximal1Z "+","+"boneProximal2X"+","+ "boneProximal2Y "+","+ "boneProximal2Z "+","+"ProximalDirUnitX"+","+"ProximalDirUnitY"+","+"ProximalDirUnitZ"+","+"Proximal Width"+","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +"\n");
 
@@ -57,7 +59,7 @@ public class LeapLogin {
 		
 		try {
 						
-			BufferedWriter	out = new BufferedWriter(new FileWriter(writePath + fileName));
+			BufferedWriter	out = new BufferedWriter(new FileWriter(writeLeapPath + fileName));
 			
             out.write("Participant ID: " + pid+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" "+","+" ");  // avoid ArrayIndexOutOfBoundsException Error when reading file and analyzing File  (here to AQ)
             out.write('\n');
