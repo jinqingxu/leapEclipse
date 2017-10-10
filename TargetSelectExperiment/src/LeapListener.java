@@ -66,132 +66,8 @@ public class LeapListener extends Listener{
 		System.out.println("Motion Sensor Disconnected");
 		
 	}
-	//return dateTime,offsetX,offsetY,offsetZ
-	public String[] readOffsetXYZ() {
-		String readCSV = LeapLogin.writeLeapPath+LeapLogin.fileName;
-        
-        try {
-        CsvReader reader = new CsvReader(readCSV, ',', Charset.forName("UTF-8"));
-        
-        
-        ArrayList<String[]> csvList = new ArrayList<String[]>(); //store data of offsets
-        
-          
-         // read the data of positions
-        int i=0;
-        String dateTime="";
-        while(reader.readRecord()){ 
-        	 //date
-        	 if(i==1) {
-        		 String[] value=reader.getValues(); //possible value:  Date: 2017/09/23
-        		 String[] value2=value[0].split(":"); // 2017/09/23
-        		 String rawDate=value2[1].trim(); //remove space
-        		 String[] dateList=rawDate.split("/");// 2017 09 23
-        		 dateTime=dateList[0]+'-'+dateList[1]+'-'+dateList[2];
-        		
-        	 }
-        	 
-        	 if(i==2) {
-        		 String[] value=reader.getValues(); //possible value:  Date: 2017/09/23
-        		 String time=value[0].substring(5, value[0].length());
-        		 dateTime+=time;
-        		 
-        	 }
-        	 
-        	 if(i>=4) {
-             csvList.add(reader.getValues());  
-        	 }
-             i++;
-             
-         }  
-         // calculate the average position
-         int offsetX=3;
-         int offsetY=4;
-         int offsetZ=5;
-         
-         ArrayList<Double> listX = new ArrayList<Double>(); 
-         ArrayList<Double> listY = new ArrayList<Double>(); 
-         ArrayList<Double> listZ = new ArrayList<Double>(); 
-         
-         
-         
-         reader.close();  
-           
-         for(int row=0;row<csvList.size();row++){  
-               
-            
-        	 if (Math.abs(Double.parseDouble(csvList.get(row)[offsetX]))<5) { // if abs(x) > 5, there may be some problem with the data, so we omit that data.
-        		 listX.add(Double.parseDouble(csvList.get(row)[offsetX]));
-        		 listY.add(Double.parseDouble(csvList.get(row)[offsetY]));
-        		 listZ.add(Double.parseDouble(csvList.get(row)[offsetZ]));
-        	 }
-      
-         }  
-         
-         Double averageX=getAverage(listX);
-         Double averageY=getAverage(listY);
-         Double averageZ=getAverage(listZ);
-         
-         String[] result=new String[4];
-         result[0]=dateTime;
-         result[1]=Double.toString(averageX);
-         result[2]=Double.toString(averageY);
-         result[3]=Double.toString(averageZ);
-         
-         System.out.println(result[0]);
-         
-         return result;
-         
-           
-        }
-        
-        catch(IOException e) {
-        	e.printStackTrace();
-        }
-        String[] result=new String[4];
-        return result;
-        
-		
-	}
-	public void writeOffsetXYZ(String[] result) {
-		String fileName="Records_Of_StartButton_Offset.csv";
-        String targetFile = LeapLogin.writePath+fileName;
-        
-        try {
-     
-        CsvWriter writer =new CsvWriter(targetFile,',',Charset.forName("UTF-8"));
-        File file=new File(targetFile);
-       
-        if (!(file.exists())) {//new file
-        	
-        	  file.createNewFile();
-        	  String[] header = {"DateTime","OffsetX(mm)","OffsetY(mm)","OffsetZ(mm)"};                    
-          writer.writeRecord(header);
-          writer.writeRecord(result);
-          
-        }
-        else {
-        	
-        // write previous data
-        	 CsvReader reader = new CsvReader(targetFile, ',', Charset.forName("UTF-8"));
-        	  while(reader.readRecord()){  	
-          writer.writeRecord(reader.getValues());  
-        }
-        	  writer.writeRecord(result);// write current data
-        	  
-        }
-      
-       writer.close();
-     
-           
-        }
-        
-        catch(IOException e) {
-        	e.printStackTrace();
-        }
-        
-		
-	}
+	
+	
 	public Double getAverage(ArrayList<Double> l) {
 		Double sumL=0.0;
 		for (int i=0;i<l.size();++i) {
@@ -200,14 +76,10 @@ public class LeapListener extends Listener{
 		return sumL/l.size();
 		
 	}
+	
 	public void  onExit(Controller controller){
 		
 		System.out.println("Exited");
-		if (LeapLogin.pid.equals("8888")) {
-			String[] result=readOffsetXYZ();
-			writeOffsetXYZ(result);
-		}
-	
 		
 	}
 	

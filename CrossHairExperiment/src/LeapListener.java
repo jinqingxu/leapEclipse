@@ -38,6 +38,7 @@ public class LeapListener extends Listener{
 		controller.enableGesture(Gesture.Type.TYPE_CIRCLE);
 		controller.enableGesture(Gesture.Type.TYPE_SCREEN_TAP);
 		controller.enableGesture(Gesture.Type.TYPE_KEY_TAP);
+		
 		/*System.out.println("arrive");
         try {
             TimeTCPClient client = new TimeTCPClient();
@@ -59,6 +60,7 @@ public class LeapListener extends Listener{
         }
        System.out.println(initialTimestamp);
 		System.out.println(initialSystemTime);*/
+		
 	}
 	
 	public void onDisconnect(Controller controller){
@@ -68,7 +70,8 @@ public class LeapListener extends Listener{
 	}
 	//return dateTime,offsetX,offsetY,offsetZ
 	public String[] readOffsetXYZ() {
-		String readCSV = LeapLogin.writeLeapPath+LeapLogin.fileName;
+		
+		String readCSV = LeapCrossHair.writeLeapPath+LeapCrossHair.fileName;
         
         try {
         CsvReader reader = new CsvReader(readCSV, ',', Charset.forName("UTF-8"));
@@ -81,6 +84,7 @@ public class LeapListener extends Listener{
         int i=0;
         String dateTime="";
         while(reader.readRecord()){ 
+        	
         	 //date
         	 if(i==1) {
         		 String[] value=reader.getValues(); //possible value:  Date: 2017/09/23
@@ -105,9 +109,9 @@ public class LeapListener extends Listener{
              
          }  
          // calculate the average position
-         int offsetX=3;
-         int offsetY=4;
-         int offsetZ=5;
+         int colNumX=3;
+         int colNumY=4;
+         int colNumZ=5;
          
          ArrayList<Double> listX = new ArrayList<Double>(); 
          ArrayList<Double> listY = new ArrayList<Double>(); 
@@ -116,14 +120,20 @@ public class LeapListener extends Listener{
          
          
          reader.close();  
-           
+         Double maxDiffX=3.326;
+         Double maxDiffY=10.0;
+         Double maxDiffZ=6.0;
+         Double rulerX=0.0;
+         Double rulerY=50.0;
+         Double rulerZ=-85.0;
+       
          for(int row=0;row<csvList.size();row++){  
                
             
-        	 if (Math.abs(Double.parseDouble(csvList.get(row)[offsetX]))<5) { // if abs(x) > 5, there may be some problem with the data, so we omit that data.
-        		 listX.add(Double.parseDouble(csvList.get(row)[offsetX]));
-        		 listY.add(Double.parseDouble(csvList.get(row)[offsetY]));
-        		 listZ.add(Double.parseDouble(csvList.get(row)[offsetZ]));
+        	 if (Math.abs(Double.parseDouble(csvList.get(row)[colNumX])-rulerX)<maxDiffX&&Math.abs(Double.parseDouble(csvList.get(row)[colNumY])-rulerY)<maxDiffY&&Math.abs(Double.parseDouble(csvList.get(row)[colNumZ])-rulerZ)<maxDiffZ) { // if abs(x) > 5, there may be some problem with the data, so we omit that data.
+        		 listX.add(Double.parseDouble(csvList.get(row)[colNumX]));
+        		 listY.add(Double.parseDouble(csvList.get(row)[colNumY]));
+        		 listZ.add(Double.parseDouble(csvList.get(row)[colNumZ]));
         	 }
       
          }  
@@ -132,13 +142,19 @@ public class LeapListener extends Listener{
          Double averageY=getAverage(listY);
          Double averageZ=getAverage(listZ);
          
-         String[] result=new String[4];
-         result[0]=dateTime;
-         result[1]=Double.toString(averageX);
-         result[2]=Double.toString(averageY);
-         result[3]=Double.toString(averageZ);
-         
-         System.out.println(result[0]);
+         String[] result=new String[5]; // the result to be written in the file
+         result[0]=LeapCrossHair.pid;
+         result[1]=dateTime;
+         if(listX.size()==0) {
+        	 result[2]="0";
+         result[3]="0";
+         result[4]="0";
+         }
+         else {
+         result[2]=Double.toString(averageX);
+         result[3]=Double.toString(averageY);
+         result[4]=Double.toString(averageZ);
+         }
          
          return result;
          
@@ -154,8 +170,8 @@ public class LeapListener extends Listener{
 		
 	}
 	public void writeOffsetXYZ(String[] result) {
-		String fileName="Records_Of_StartButton_Offset.csv";
-        String targetFile = LeapLogin.writePath+fileName;
+		String fileName="Average_x_y_z_of_crossHair_experiment.csv";
+        String targetFile = LeapCrossHair.writePath+fileName;
         
         try {
      
@@ -165,7 +181,7 @@ public class LeapListener extends Listener{
         if (!(file.exists())) {//new file
         	
         	  file.createNewFile();
-        	  String[] header = {"DateTime","OffsetX(mm)","OffsetY(mm)","OffsetZ(mm)"};                    
+        	  String[] header = {"Pid","DateTime","AverageX(mm)","AverageY(mm)","AverageZ(mm)"};                    
           writer.writeRecord(header);
           writer.writeRecord(result);
           
@@ -177,6 +193,7 @@ public class LeapListener extends Listener{
         	  while(reader.readRecord()){  	
           writer.writeRecord(reader.getValues());  
         }
+        	  System.out.println(result[0]);
         	  writer.writeRecord(result);// write current data
         	  
         }
@@ -203,10 +220,12 @@ public class LeapListener extends Listener{
 	public void  onExit(Controller controller){
 		
 		System.out.println("Exited");
-		if (LeapLogin.pid.equals("8888")) {
+		System.out.println(LeapCrossHair.pid);
+		/*if(Double.parseDouble(LeapCrossHair.pid)>8000) {
 			String[] result=readOffsetXYZ();
+			System.out.println("arrived");
 			writeOffsetXYZ(result);
-		}
+		}*/
 	
 		
 	}
@@ -256,8 +275,6 @@ public class LeapListener extends Listener{
 		//out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +","+ "RotationAxisX"+","+ "RotationAxisY"+","+ "RotationAxisZ"+","+"wrist position X"+","+"wrist position Y"+","+"wrist position Z"+","+"rotation Probability" +"\n");
 		out.write(frame.id() + ","+ frame.timestamp() + ","+ System.currentTimeMillis() + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +"," +speedCalculate+"\n");
 		
-		
-	
 		//out.write(frame.id() + ","+ frame.timestamp() + ","+ curTimestamp + ","+ tipPosition.getX()  +","+ tipPosition.getY() + "," + tipPosition.getZ() +"," + direction.getX() +","+ direction.getY() +","+ direction.getZ() + ","+ direction.yaw() +","+ direction.pitch() + ","+ direction.roll() +","+ stabilizedPosition.getX() +","+ stabilizedPosition.getY() +","+ stabilizedPosition.getZ() +","+ speed.getX() +","+ speed.getY() +"," + speed.getZ() +"," +speedCalculate+"\n");
 		out.close();
 
